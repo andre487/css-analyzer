@@ -4,14 +4,17 @@ var cssFs = require('../fs.js'),
     async = require('async'),
     _ = require('lodash'),
     css = require('css'),
-    metrics = require('../metrics.js');
+    metrics = require('../metrics.js'),
+    report = require('../report.js');
+
 
 module.exports = function (args) {
     var astTable = {},
         astStatistics = {},
-        whitespacesStat = {},
+        whitespacesStatistics = {},
         filesList,
         contentsTable;
+
     async.waterfall(
         [
             function (callback) {
@@ -38,7 +41,7 @@ module.exports = function (args) {
                     astStatistics[path] = metrics.countAstStat(ast);
                 });
                 _.forIn(contentsTable, function (content, path) {
-                    whitespacesStat[path] = metrics.countWhitespaces(content);
+                    whitespacesStatistics[path] = metrics.countWhitespaces(content);
                 });
                 callback(null);
             }
@@ -48,8 +51,11 @@ module.exports = function (args) {
                 throw new Error(typeof(err) + ': ' + err);
             }
 
-            console.log(astStatistics);
-            console.log(whitespacesStat);
+            report.printStatisticsReport(
+                astStatistics,
+                whitespacesStatistics,
+                filesList
+            );
 
             console.log(
                 cliColor.green('Flawless victory')
