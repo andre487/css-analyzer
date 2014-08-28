@@ -1,10 +1,14 @@
 'use strict';
 var cssFs = require('../fs.js'),
     cliColor = require('cli-color'),
-    async = require('async');
+    async = require('async'),
+    _ = require('lodash'),
+    css = require('css');
 
 module.exports = function (args) {
-    var filesList, contentsTable;
+    var astTable = {},
+        filesList,
+        contentsTable;
     async.waterfall(
         [
             function (callback) {
@@ -19,7 +23,14 @@ module.exports = function (args) {
             },
             function (result, callback) {
                 contentsTable = result;
-                callback(null);
+                console.log('Parse CSS');
+                var handler = function (pair, locCallback) {
+                    process.nextTick(function () {
+                        astTable[pair[0]] = css.parse(pair[1]);
+                        locCallback(null);
+                    });
+                };
+                async.each(_.pairs(contentsTable), handler, callback);
             }
         ],
         function (err) {
