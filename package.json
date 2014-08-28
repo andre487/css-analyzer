@@ -5,7 +5,11 @@
     "version": "0.0.1",
     "bin": "bem-csser",
     "dependencies": {
+        "async": "latest",
         "argparse": "latest",
+        "lodash": "latest",
+        "cli-color": "latest",
+        "glob": "latest",
         "css": "latest"
     }
 }
