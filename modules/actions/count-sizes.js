@@ -8,7 +8,8 @@ var cssFs = require('../fs.js'),
 
 module.exports = function (args) {
     var astTable = {},
-        statistics = {},
+        astStatistics = {},
+        whitespacesStat = {},
         filesList,
         contentsTable;
     async.waterfall(
@@ -34,7 +35,10 @@ module.exports = function (args) {
             function (callback) {
                 console.log('Counting statistics');
                 _.forIn(astTable, function (ast, path) {
-                    statistics[path] = metrics.countAstStat(ast);
+                    astStatistics[path] = metrics.countAstStat(ast);
+                });
+                _.forIn(contentsTable, function (content, path) {
+                    whitespacesStat[path] = metrics.countWhitespaces(content);
                 });
                 callback(null);
             }
@@ -44,7 +48,8 @@ module.exports = function (args) {
                 throw new Error(typeof(err) + ': ' + err);
             }
 
-            console.log(statistics);
+            console.log(astStatistics);
+            console.log(whitespacesStat);
 
             console.log(
                 cliColor.green('Flawless victory')

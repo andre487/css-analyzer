@@ -1,8 +1,10 @@
 'use strict';
 var _ = require('lodash');
 
+
 module.exports = {
-    countAstStat: countAstStat
+    countAstStat: countAstStat,
+    countWhitespaces: countWhitespaces
 };
 
 
@@ -85,5 +87,40 @@ function countAstStat(ast) {
         stat.all_important += val;
     });
     stat.ignored_nodes = _.uniq(stat.ignored_nodes);
+    return stat;
+}
+
+
+/**
+ * Count whitespaces in text content
+ * @param {String} content File content
+ * @returns {Object}
+ */
+function countWhitespaces(content) {
+    var spaces = [' ', '\t', '\r', '\n'],
+        stat = {
+            all_whitespaces: 0,
+            leading_spaces: 0,
+            trailing_spaces: 0
+        };
+
+    _.forEach(content, function (ch) {
+        if (_.contains(spaces, ch)) {
+            ++stat.all_whitespaces;
+        }
+    });
+
+    var leadingSpacesMatch = content.match(new RegExp('^[' + spaces.join('') + ']+', 'mg')),
+        trailingSpacesMatch = content.match(new RegExp('[' + spaces.join('') + ']+$', 'mg'));
+    if (leadingSpacesMatch) {
+        _.forEach(leadingSpacesMatch, function (match) {
+            stat.leading_spaces += match.length;
+        });
+    }
+    if (trailingSpacesMatch) {
+        _.forEach(trailingSpacesMatch, function (match) {
+            stat.trailing_spaces += match.length;
+        });
+    }
     return stat;
 }
