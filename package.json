@@ -1,0 +1,10 @@
+{
+    "name": "bem-csser",
+    "description": "CSS tool for BEM projects",
+    "repository": ".",
+    "version": "0.0.1",
+    "bin": "bem-csser",
+    "dependencies": {
+        "css": "latest"
+    }
+}
