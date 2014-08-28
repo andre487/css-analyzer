@@ -1,11 +1,34 @@
 'use strict';
-var cssFs = require('../fs.js');
+var cssFs = require('../fs.js'),
+    cliColor = require('cli-color'),
+    async = require('async');
 
 module.exports = function (args) {
-    cssFs.getFilesList(args.path, '**/*.css', function (err, filesList) {
-        if (err) {
-            throw new Error(String(err));
+    var filesList, contentsTable;
+    async.waterfall(
+        [
+            function (callback) {
+                console.log('Extracting files info');
+                cssFs.getFilesList(args.path, '**/*.css', callback);
+            },
+            function (result, callback) {
+                filesList = result;
+                console.info(cliColor.white(result.length + ' CSS files found'));
+                console.log('Reading files contents');
+                cssFs.getFilesContents(filesList, callback);
+            },
+            function (result, callback) {
+                contentsTable = result;
+                callback(null);
+            }
+        ],
+        function (err) {
+            if (err) {
+                throw new Error(typeof(err) + ': ' + err);
+            }
+            console.log(
+                cliColor.green('Flawless victory')
+            );
         }
-        console.log('filesList', filesList);
-    });
+    );
 };

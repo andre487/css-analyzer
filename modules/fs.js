@@ -7,6 +7,7 @@ var async = require('async'),
 
 module.exports = {
     getFilesList: getFilesList,
+    getFilesContents: getFilesContents,
     globPatternTest: globPatternTest
 };
 
@@ -109,4 +110,27 @@ function globPatternTest(path, pattern) {
             .replace(/\*+/, '.+?'),
         regexp = new RegExp(regexpPattern);
     return regexp.test(path);
+}
+
+
+/**
+ * Get files contents
+ * @param {Object} filesList Object returned by getFilesList function
+ * @param {Function} callback
+ */
+function getFilesContents(filesList, callback) {
+    var handler = function (fileInfo, locCallback) {
+        fs.readFile(fileInfo.path, function (err, buffer) {
+            if (err) {
+                return locCallback(err);
+            }
+            locCallback(null, [fileInfo.path, buffer.toString()]);
+        });
+    };
+    async.map(filesList, handler, function (err, result) {
+        if (err) {
+            return callback(err);
+        }
+        callback(null, _.object(result));
+    });
 }

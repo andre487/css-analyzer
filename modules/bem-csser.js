@@ -53,6 +53,6 @@ function act(args) {
     action(args);
 
     function showPath() {
-        console.info(cliColor.white('Use path: ' + args.path));
+        console.info(cliColor.magenta('Use path: ' + args.path));
     }
 }
