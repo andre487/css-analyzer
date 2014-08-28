@@ -5,6 +5,7 @@
     "version": "0.0.1",
     "bin": "bem-csser",
     "dependencies": {
+        "argparse": "latest",
         "css": "latest"
     }
 }
